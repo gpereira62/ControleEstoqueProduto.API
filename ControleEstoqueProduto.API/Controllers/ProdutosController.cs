@@ -50,7 +50,7 @@ namespace ControleEstoqueProduto.API.Controllers
             var produto = await _context.Produtos.Where(p => p.Delete == false).FirstOrDefaultAsync(p => p.Id == id);
 
             if (produto == null)
-                return NotFound("Id não encontrado!");
+                return NotFound("Produto não encontrado!!");
 
             return produto;
         }
@@ -84,10 +84,6 @@ namespace ControleEstoqueProduto.API.Controllers
         [ProducesResponseType(204)]
         public async Task<IActionResult> PutProduto(int id, Produto produto)
 		{
-
-			if (id != produto.Id)
-				return BadRequest(error: "Id da Url é diferente do id do produto!");
-
             if (produto.Nome == null)
                 return StatusCode(422, "Campo nome inexistente!");
 
@@ -116,7 +112,7 @@ namespace ControleEstoqueProduto.API.Controllers
             produto.Nome = produto.Nome.Trim();
             produto.DataAlteracao = DateTime.Now;
 
-            _context.Entry(produto).State = EntityState.Modified;
+			_context.Entry(produto).State = EntityState.Modified;
 
 			try
 			{
@@ -125,7 +121,7 @@ namespace ControleEstoqueProduto.API.Controllers
 			catch (DbUpdateConcurrencyException)
 			{
 				if (!Util.ProdutoExists(_context, id))
-					return NotFound("Id não encontrado!");
+					return NotFound("Produto não encontrado!");
 				else
 					throw;
 			}
@@ -161,12 +157,7 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <response code="409">Se o conteúdo do campo "nome", já estiver cadastrado no banco de dados</response>
         /// <response code="422">Se o campo "nome", for inexistente no request body</response>
         [HttpPost]
-        [ProducesResponseType(typeof(ProdutoPostStatus200), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Produto), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(Produto), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(Produto), StatusCodes.Status406NotAcceptable)]
-        [ProducesResponseType(typeof(Produto), StatusCodes.Status409Conflict)]
-        [ProducesResponseType(typeof(Produto), StatusCodes.Status409Conflict)]
+        //[ProducesResponseType(typeof(ProdutoPostStatus200), StatusCodes.Status200OK)]
         //[SwaggerRequestExample]
         public async Task<ActionResult<Produto>> PostProduto(Produto produto)
         {
@@ -213,7 +204,7 @@ namespace ControleEstoqueProduto.API.Controllers
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null)
-                return NotFound();
+                return NotFound("Produto não encontrado!");
 
             produto.DataAlteracao = DateTime.Now;
             produto.Delete = true;
