@@ -17,6 +17,7 @@ namespace ControleEstoqueProduto.API.Controllers
     public class ProdutosController : ControllerBase
     {
         private readonly Contexto _context;
+        private DateTime horaBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
 
         public ProdutosController(Contexto context)
         {
@@ -96,6 +97,8 @@ namespace ControleEstoqueProduto.API.Controllers
             if (produto.Nome.Equals(""))
                 return StatusCode(403, "Nome do produto é obrigatório!");
 
+            produto.Nome = produto.Nome.Trim();
+
             if (Util.contemNumeros(produto.Nome) && !Util.contemLetras(produto.Nome))
                 return StatusCode(403, "Não é permitido somente números no campo nome!");
 
@@ -109,10 +112,10 @@ namespace ControleEstoqueProduto.API.Controllers
                     return StatusCode(409, "Este produto foi deletado e não é possível altera-lo");
             }
 
-            produto.Nome = produto.Nome.Trim();
-            produto.DataAlteracao = DateTime.Now;
+            produto.DataAlteracao = horaBrasilia;
 
-			_context.Entry(produto).State = EntityState.Modified;
+
+            _context.Entry(produto).State = EntityState.Modified;
 
 			try
 			{
@@ -173,15 +176,16 @@ namespace ControleEstoqueProduto.API.Controllers
             if (produto.Nome.Equals(""))
                 return StatusCode(403, "Nome do produto é obrigatório!");
 
-			if (Util.contemNumeros(produto.Nome) && !Util.contemLetras(produto.Nome))
+            produto.Nome = produto.Nome.Trim();
+
+            if (Util.contemNumeros(produto.Nome) && !Util.contemLetras(produto.Nome))
                 return StatusCode(403, "Não é permitido somente números no campo nome!");
 
 			if ((_context.Produtos.Where(p => p.Nome.Equals(produto.Nome)).Any()))
                 return StatusCode(409, "Este nome de produto já foi cadastrado!");
 
-            produto.Nome = produto.Nome.Trim();
-            produto.DataInclusao = DateTime.Now;
-            produto.DataAlteracao = DateTime.Now;
+            produto.DataInclusao = horaBrasilia;
+            produto.DataAlteracao = horaBrasilia;
 
             _context.Produtos.Add(produto);
             await _context.SaveChangesAsync();

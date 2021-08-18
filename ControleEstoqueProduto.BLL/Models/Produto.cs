@@ -15,19 +15,12 @@ namespace ControleEstoqueProduto.BLL.Models
 
 		public int Id { get; set; }
 
-		[Required(AllowEmptyStrings = false)]
-		[MaxLength(50)]
 		public string Nome { get; set; }
 
-		[Required]
-		[Range(1, int.MaxValue)]
 		public int Qtde { get; set; }
 
-		[Required]
 		public bool Ativo { get; set; }
 
-		[Required]
-		[DefaultValue(false)]
 		[JsonIgnore]
 		public bool Delete { get; set; }
 
