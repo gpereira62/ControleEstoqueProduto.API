@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/ControleEstoqueProdutoAPI/apis/ControleEstoqueProdutoAPI",
+      "type": "apis.azure"
+    },
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/controleestoqueprodutoapidbserver/databases/ControleEstoqueProduto.API_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:ConexaoBD",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}
