@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControleEstoqueProduto.BLL.Models;
 using ControleEstoqueProduto.DAL;
+using ControleEstoqueProduto.DAL.Repository;
 
 namespace ControleEstoqueProduto.API.Controllers
 {
@@ -14,13 +15,7 @@ namespace ControleEstoqueProduto.API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly Contexto _context;
         private DateTime horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
-
-        public ProdutosController(Contexto context)
-        {
-            _context = context;
-        }
 
         // GET: api/Produtos/
         /// <summary>
@@ -29,10 +24,11 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <returns>Os produtos cadastrados</returns>
         /// <response code="200">Retorna uma lista dos produtos cadastrados</response>
         [HttpGet]
+        [Consumes("application/json")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos()
+        public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos([FromServices]IProdutoRepository produtoRepository)
         {
-            return await _context.Produtos.Where(p => p.Delete == false).ToListAsync();
+            return await produtoRepository.GetAll();
         }
 
         // GET: api/Produtos/1
@@ -41,13 +37,12 @@ namespace ControleEstoqueProduto.API.Controllers
         /// </summary>
         /// <returns>O produto cadastrado pelo id informado</returns>
         /// <response code="200">Retorna o produto pelo id informado</response>
-        /// <response code="404">Se o produto não for encontrado pelo id informado</response>
         [HttpGet("{id}")]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<Produto>> GetProduto(int id)
+        public async Task<ActionResult<Produto>> GetProduto(int id, [FromServices]IProdutoRepository produtoRepository)
         {
-            var produto = await _context.Produtos.Where(p => p.Delete == false).FirstOrDefaultAsync(p => p.Id == id);
+            var produto = await produtoRepository.Get(id);
 
             if (produto == null)
                 return NotFound(new { message = "Produto não encontrado" } );
@@ -74,42 +69,26 @@ namespace ControleEstoqueProduto.API.Controllers
         /// </remarks>
         /// <returns>O produto cadastrado pelo id informado</returns>
         /// <response code="204">Retorna vazio indicando que o produto foi alterado com sucesso</response>
-        /// <response code="400">Se o id da url, for diferente do id do produto no request body</response>
-        /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
-        /// <response code="404">Se o produto não for encontrado pelo id informado</response>
-        /// <response code="406">Se o campo "nome", passar de 50 caracteres; Se o campo "qtde", for menor que 1</response>
-        /// <response code="422">Se o campo "nome", for inexistente no request body</response>
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> PutProduto(int id, Produto produto)
+        public async Task<IActionResult> PutProduto(int id, Produto produto, [FromServices]IProdutoRepository produtoRepository)
 		{
+            if (id != produto.Id)
+                return BadRequest(new { message = "Id filtrado é diferente do Id do request body." });
+
+			if (!produtoRepository.ProdutoExists(id))
+                return NotFound(new { message = "Produto não encontrado." });
+
             produto.Nome = produto.Nome.Trim();
 
-            if (_context.Produtos.Any(e => e.Id == id))
-            {
-                var produtoEncontrado = await _context.Produtos.FindAsync(id);
-                if (produtoEncontrado.Delete)
-                    return StatusCode(409, "Este produto foi deletado e não é possível altera-lo");
-            }
+			if (produtoRepository.ProdutoDeleteExists(id))
+				return StatusCode(409, "Este produto foi deletado e não é possível alterá-lo");
 
-            produto.DataAlteracao = horarioBrasilia;
+			produto.DataAlteracao = horarioBrasilia;
+            await produtoRepository.Update(produto);
 
-            _context.Entry(produto).State = EntityState.Modified;
-
-			try
-			{
-				await _context.SaveChangesAsync();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!_context.Produtos.Any(e => e.Id == id))
-                    return NotFound(new { message = "Produto não encontrado." });
-                else
-					throw;
-			}
-
-			return NoContent();
-		}
+            return NoContent();
+        }
 
         // POST: api/Produtos
         /// <summary>
@@ -127,27 +106,23 @@ namespace ControleEstoqueProduto.API.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="produto">objeto produto</param>
         /// <returns>Um novo produto criado</returns>
-        /// <response code="200">Retorna ok indicando que o produto foi criado com sucesso</response>
-        /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
-        /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
-        /// <response code="406">Se o campo "qtde", for menor que 1; Se o campo "nome", passar de 50 caracteres</response>
-        /// <response code="422">Se o campo "nome", for inexistente no request body</response>
+        /// <response code="201">Retorna o produto indicando que ele foi criado com sucesso</response>
         [HttpPost]
+        [Consumes("application/json")]
+        [ProducesResponseType(201)]
         //[ProducesResponseType(typeof(ProdutoPostStatus200), StatusCodes.Status200OK)]
         //[SwaggerRequestExample]
-        public async Task<ActionResult<Produto>> PostProduto(Produto produto)
+        public async Task<ActionResult<Produto>> PostProduto(Produto produto, [FromServices]IProdutoRepository produtoRepository)
         {
             produto.Nome = produto.Nome.Trim();
 
             produto.DataInclusao = horarioBrasilia;
             produto.DataAlteracao = horarioBrasilia;
 
-            _context.Produtos.Add(produto);
-            await _context.SaveChangesAsync();
+            await produtoRepository.Add(produto);
 
-            return Ok(produto);
+            return CreatedAtAction("GetProdutos", new { id = produto.Id }, produto);
         }
 
         // DELETE: api/Produtos/1
@@ -157,22 +132,20 @@ namespace ControleEstoqueProduto.API.Controllers
         /// tambem não será possivel alterar em um Put)
         /// </summary>
         /// <returns>Não é retornado nenhuma informação, indicando que a exclusão foi feita com sucesso</returns>
-        /// <response code="204">Não é retornado nenhuma informação, indicando que a exclusão foi feita com sucesso</response>
-        /// <response code="404">Se o produto, não for encontrado pelo id informado</response>
+        /// <response code="204">Retorna vazio indicando que a exclusão foi feita com sucesso</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> DeleteProduto(int id)
+        public async Task<IActionResult> DeleteProduto(int id, [FromServices]IProdutoRepository produtoRepository)
         {
-            var produto = await _context.Produtos.FindAsync(id);
+            var produto = await produtoRepository.Get(id);
             if (produto == null)
                 return NotFound(new { message = "Produto não encontrado." });
 
-            produto.DataAlteracao = DateTime.Now;
-            produto.Delete = true;
-
-            await _context.SaveChangesAsync();
+            produto.DataAlteracao = horarioBrasilia;
+            await produtoRepository.Delete(produto);
 
             return NoContent();
         }
+
     }
 }

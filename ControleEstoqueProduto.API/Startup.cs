@@ -1,4 +1,5 @@
 using ControleEstoqueProduto.DAL;
+using ControleEstoqueProduto.DAL.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,7 @@ namespace ControleEstoqueProduto.API
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<Contexto>(opcoes => opcoes.UseSqlServer(Configuration.GetConnectionString("ConexaoBD")));
+			services.AddTransient<IProdutoRepository, ProdutoRepository>();
 
 			services.AddCors();
 
@@ -58,7 +60,7 @@ namespace ControleEstoqueProduto.API
 						Email = "gustavopereirasantos@hotmail.com",
 						Url = new System.Uri("https://github.com/gpereira62")
 					},
-				});;
+				});; 
 
 				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
