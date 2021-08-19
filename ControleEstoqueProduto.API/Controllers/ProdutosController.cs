@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControleEstoqueProduto.BLL.Models;
 using ControleEstoqueProduto.DAL;
-using ControleEstoqueProduto.API.Controllers.ProducesResponseTypeClasses;
 
 namespace ControleEstoqueProduto.API.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/v1/produtos/")]
     [ApiController]
     public class ProdutosController : ControllerBase
     {
         private readonly Contexto _context;
-        private DateTime horaBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+        private DateTime horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
 
         public ProdutosController(Contexto context)
         {
@@ -45,13 +43,14 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <response code="200">Retorna o produto pelo id informado</response>
         /// <response code="404">Se o produto não for encontrado pelo id informado</response>
         [HttpGet("{id}")]
+        [Consumes("application/json")]
         [ProducesResponseType(200)]
         public async Task<ActionResult<Produto>> GetProduto(int id)
         {
             var produto = await _context.Produtos.Where(p => p.Delete == false).FirstOrDefaultAsync(p => p.Id == id);
 
             if (produto == null)
-                return NotFound("Produto não encontrado!!");
+                return NotFound(new { message = "Produto não encontrado" } );
 
             return produto;
         }
@@ -79,41 +78,21 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
         /// <response code="404">Se o produto não for encontrado pelo id informado</response>
         /// <response code="406">Se o campo "nome", passar de 50 caracteres; Se o campo "qtde", for menor que 1</response>
-        /// <response code="409">Se o conteúdo do campo "nome", já estiver cadastrado no banco de dados</response>
         /// <response code="422">Se o campo "nome", for inexistente no request body</response>
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
         public async Task<IActionResult> PutProduto(int id, Produto produto)
 		{
-            if (produto.Nome == null)
-                return StatusCode(422, "Campo nome inexistente!");
-
-            if (produto.Qtde < 1)
-                return StatusCode(406, "Campo qtde tem que ser maior que zero!");
-
-            if (produto.Nome.Length > 50)
-                return StatusCode(406, "Nome do produto muito grande, máximo 50 caracteres!");
-
-            if (produto.Nome.Equals(""))
-                return StatusCode(403, "Nome do produto é obrigatório!");
-
             produto.Nome = produto.Nome.Trim();
 
-            if (Util.contemNumeros(produto.Nome) && !Util.contemLetras(produto.Nome))
-                return StatusCode(403, "Não é permitido somente números no campo nome!");
-
-            if ((_context.Produtos.Where(p => p.Nome.Equals(produto.Nome) && p.Id != id).Any()))
-                return StatusCode(409, "Este nome de produto já foi cadastrado!");
-
-            if (Util.ProdutoExists(_context, id))
+            if (_context.Produtos.Any(e => e.Id == id))
             {
                 var produtoEncontrado = await _context.Produtos.FindAsync(id);
                 if (produtoEncontrado.Delete)
                     return StatusCode(409, "Este produto foi deletado e não é possível altera-lo");
             }
 
-            produto.DataAlteracao = horaBrasilia;
-
+            produto.DataAlteracao = horarioBrasilia;
 
             _context.Entry(produto).State = EntityState.Modified;
 
@@ -123,9 +102,9 @@ namespace ControleEstoqueProduto.API.Controllers
 			}
 			catch (DbUpdateConcurrencyException)
 			{
-				if (!Util.ProdutoExists(_context, id))
-					return NotFound("Produto não encontrado!");
-				else
+				if (!_context.Produtos.Any(e => e.Id == id))
+                    return NotFound(new { message = "Produto não encontrado." });
+                else
 					throw;
 			}
 
@@ -148,44 +127,22 @@ namespace ControleEstoqueProduto.API.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="id" example="1">Id do Produto</param>
-        /// <param name="nome" example="Produto 1">Nome do Produto</param>
-        /// <param name="qtde" example="50">Valor de Quantidade do produto no Estoque</param>
-        /// <param name="ativo" example="false">Se o produto está ativo ou não</param>
+        /// <param name="produto">objeto produto</param>
         /// <returns>Um novo produto criado</returns>
         /// <response code="200">Retorna ok indicando que o produto foi criado com sucesso</response>
         /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
         /// <response code="403">Se o campo "nome", for uma string vazia; Se o campo "nome", for somente números</response>
         /// <response code="406">Se o campo "qtde", for menor que 1; Se o campo "nome", passar de 50 caracteres</response>
-        /// <response code="409">Se o conteúdo do campo "nome", já estiver cadastrado no banco de dados</response>
         /// <response code="422">Se o campo "nome", for inexistente no request body</response>
         [HttpPost]
         //[ProducesResponseType(typeof(ProdutoPostStatus200), StatusCodes.Status200OK)]
         //[SwaggerRequestExample]
         public async Task<ActionResult<Produto>> PostProduto(Produto produto)
         {
-            if (produto.Nome == null)
-                return StatusCode(422, "Campo nome inexistente!");
-
-            if (produto.Qtde < 1)
-                return StatusCode(406, "Campo qtde tem que ser maior que zero!");
-
-            if (produto.Nome.Length > 50)
-                return StatusCode(406, "Nome do produto muito grande, máximo 50 caracteres!");
-
-            if (produto.Nome.Equals(""))
-                return StatusCode(403, "Nome do produto é obrigatório!");
-
             produto.Nome = produto.Nome.Trim();
 
-            if (Util.contemNumeros(produto.Nome) && !Util.contemLetras(produto.Nome))
-                return StatusCode(403, "Não é permitido somente números no campo nome!");
-
-			if ((_context.Produtos.Where(p => p.Nome.Equals(produto.Nome)).Any()))
-                return StatusCode(409, "Este nome de produto já foi cadastrado!");
-
-            produto.DataInclusao = horaBrasilia;
-            produto.DataAlteracao = horaBrasilia;
+            produto.DataInclusao = horarioBrasilia;
+            produto.DataAlteracao = horarioBrasilia;
 
             _context.Produtos.Add(produto);
             await _context.SaveChangesAsync();
@@ -208,7 +165,7 @@ namespace ControleEstoqueProduto.API.Controllers
         {
             var produto = await _context.Produtos.FindAsync(id);
             if (produto == null)
-                return NotFound("Produto não encontrado!");
+                return NotFound(new { message = "Produto não encontrado." });
 
             produto.DataAlteracao = DateTime.Now;
             produto.Delete = true;

@@ -16,7 +16,6 @@ namespace ControleEstoqueProduto.DAL.Mapeamento
 			builder.HasKey(p => p.Id);
 
 			builder.Property(p => p.Nome).IsRequired().HasMaxLength(50);
-			builder.HasIndex(p => p.Nome).IsUnique();
 				
 			builder.Property(p => p.Qtde).IsRequired();
 
