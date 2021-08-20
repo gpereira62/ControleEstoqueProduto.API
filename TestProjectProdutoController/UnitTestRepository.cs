@@ -13,16 +13,24 @@ namespace TestProjectProdutoController
 	public class UnitTestRepository
 	{
 
+		private DbContextOptions<Contexto> options;
+		private Contexto context;
+		private ProdutoRepository produtoRepository;
+
+		public UnitTestRepository()
+		{
+			options = new DbContextOptionsBuilder<Contexto>()
+							  .UseInMemoryDatabase(databaseName: "MockDB")
+							  .Options;
+			context = new Contexto(options);
+			produtoRepository = new ProdutoRepository(context);
+		}
+
 		[Fact(DisplayName = "Consultar produtos com sucesso")]
 		public async void TestProdutoRepositoryGetAll()
 		{
 			// Arrange
-			var options = new DbContextOptionsBuilder<Contexto>()
-								  .UseInMemoryDatabase(databaseName: "MockDB")
-								  .Options;
-			var context = new Contexto(options);
 			context.Produtos.RemoveRange(context.Produtos);
-			var produtoRepository = new ProdutoRepository(context);
 			var produto1 = new Produto { Id = 1, Nome = "produto 1" };
 			var produto2 = new Produto { Id = 2, Nome = "produto 2" };
 			var produto3 = new Produto { Id = 3, Nome = "produto 3" };
@@ -45,33 +53,23 @@ namespace TestProjectProdutoController
 		public async void TestProdutoRepositoryGet()
 		{
 			// Arrange
-			var options = new DbContextOptionsBuilder<Contexto>()
-								  .UseInMemoryDatabase(databaseName: "MockDB")
-								  .Options;
-			var context = new Contexto(options);
 			context.Produtos.RemoveRange(context.Produtos);
-			var produtoRepository = new ProdutoRepository(context);
-			var produto1 = new Produto { Id = 1, Nome = "produto 1" };
-			await produtoRepository.Add(produto1);
+			var produto = new Produto { Id = 1, Nome = "produto 1" };
+			await produtoRepository.Add(produto);
 
 
 			// Act
 			var resultado = produtoRepository.Get(1);
 
 			// Assert
-			Assert.Equal(produto1, resultado.Result);
-			Assert.Equal(produto1.Id, resultado.Result.Id);
+			Assert.Equal(produto, resultado.Result);
+			Assert.Equal(produto.Id, resultado.Result.Id);
 		}
 
 		[Fact(DisplayName = "Alterar um produto com sucesso")]
 		public async void TestProdutoRepositoryUpdate()
 		{
 			// Arrange
-			var options = new DbContextOptionsBuilder<Contexto>()
-								  .UseInMemoryDatabase(databaseName: "MockDB")
-								  .Options;
-			var context = new Contexto(options);
-			var produtoRepository = new ProdutoRepository(context);
 			var produto = new Produto { Id = 1, Nome = "produto 1" };
 			await produtoRepository.Add(produto);
 			produto.Nome = "produto alterado";
@@ -89,12 +87,7 @@ namespace TestProjectProdutoController
 		public async void TestProdutoRepositoryAdd()
 		{
 			// Arrange
-			var options = new DbContextOptionsBuilder<Contexto>()
-								  .UseInMemoryDatabase(databaseName: "MockDB")
-								  .Options;
-			var context = new Contexto(options);
 			context.Produtos.RemoveRange(context.Produtos);
-			var produtoRepository = new ProdutoRepository(context);
 			var produtoEsperado = new Produto { Id = 1, Nome = "produto teste" };
 
 			// Act
@@ -109,12 +102,7 @@ namespace TestProjectProdutoController
 		public async void TestProdutoRepositoryDelete()
 		{
 			// Arrange
-			var options = new DbContextOptionsBuilder<Contexto>()
-								  .UseInMemoryDatabase(databaseName: "MockDB")
-								  .Options;
-			var context = new Contexto(options);
 			context.Produtos.RemoveRange(context.Produtos);
-			var produtoRepository = new ProdutoRepository(context);
 			var produtoDeletado = new Produto { Id = 1, Nome = "produto teste" };
 			await produtoRepository.Add(produtoDeletado);
 

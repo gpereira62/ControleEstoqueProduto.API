@@ -12,12 +12,19 @@ namespace TestProjectProdutoController
 {
 	public class UnitTestController
 	{
+		private IProdutoRepository produtoRepository;
+		private ProdutosController produtosController;
+
+		public UnitTestController()
+		{
+			produtoRepository = Substitute.For<IProdutoRepository>();
+			produtosController = new ProdutosController(produtoRepository);
+		}
+
 		[Fact(DisplayName = "Cadastrar um produto com sucesso")]
 		public async void TestProdutoControllerPostProduto()
 		{
 			// Arrange
-			var produtoRepository = Substitute.For<IProdutoRepository>();
-			var produtosController = new ProdutosController(produtoRepository);
 			var produto = new Produto { Id = 1, Nome = "produto teste" };
 
 			// Act
@@ -31,8 +38,6 @@ namespace TestProjectProdutoController
 		public void TestProdutoControllerGetProdutos()
 		{
 			// Arrange
-			var produtoRepository = Substitute.For<IProdutoRepository>();
-			var produtosController = new ProdutosController(produtoRepository);
 			List<Produto> listProdutos = new List<Produto>();
 			listProdutos.Add(new Produto { Id = 1, Nome = "produto teste 1" });
 			listProdutos.Add(new Produto { Id = 2, Nome = "produto teste 2" });
@@ -58,8 +63,6 @@ namespace TestProjectProdutoController
 		public void TestProdutoControllerGetProduto()
 		{
 			// Arrange
-			var produtoRepository = Substitute.For<IProdutoRepository>();
-			var produtosController = new ProdutosController(produtoRepository);
 			produtoRepository.Get(1).Returns(Task.FromResult(new Produto { Id = 1, Nome = "produto teste" }));
 
 			// Act
@@ -73,8 +76,6 @@ namespace TestProjectProdutoController
 		public async void TestProdutoControllerPutProduto()
 		{
 			// Arrange
-			var produtoRepository = Substitute.For<IProdutoRepository>();
-			var produtosController = new ProdutosController(produtoRepository);
 			produtoRepository.ProdutoExists(1).Returns(true);
 			produtoRepository.ProdutoDeleteExists(1).Returns(false);
 			var produto = new Produto { Id = 1, Nome = "produto teste" };
@@ -91,8 +92,6 @@ namespace TestProjectProdutoController
 		public async void TestProdutoControllerDeleteProduto()
 		{
 			// Arrange
-			var produtoRepository = Substitute.For<IProdutoRepository>();
-			var produtosController = new ProdutosController(produtoRepository);
 			produtoRepository.Get(1).Returns(Task.FromResult(new Produto { Id = 1, Nome = "produto teste" }));
 
 			// Act
