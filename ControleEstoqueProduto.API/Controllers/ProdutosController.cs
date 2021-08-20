@@ -15,9 +15,17 @@ namespace ControleEstoqueProduto.API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
+
         private DateTime horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
 
-        // GET: api/Produtos/
+        private readonly IProdutoRepository _produtoRepository;
+
+		public ProdutosController(IProdutoRepository produtoRepository)
+		{
+            _produtoRepository = produtoRepository;
+        }
+
+        // GET: api/v1/produtos/
         /// <summary>
         /// Retorna os produtos cadastrados
         /// </summary>
@@ -31,7 +39,7 @@ namespace ControleEstoqueProduto.API.Controllers
             return await produtoRepository.GetAll();
         }
 
-        // GET: api/Produtos/1
+        // GET: api/v1/produtos/1
         /// <summary>
         /// Retorna o produto cadastrado pelo id informado
         /// </summary>
@@ -40,9 +48,9 @@ namespace ControleEstoqueProduto.API.Controllers
         [HttpGet("{id}")]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<Produto>> GetProduto(int id, [FromServices]IProdutoRepository produtoRepository)
+        public async Task<ActionResult<Produto>> GetProduto(int id)
         {
-            var produto = await produtoRepository.Get(id);
+            var produto = await _produtoRepository.Get(id);
 
             if (produto == null)
                 return NotFound(new { message = "Produto não encontrado" } );
@@ -50,7 +58,7 @@ namespace ControleEstoqueProduto.API.Controllers
             return produto;
         }
 
-        // PUT: api/Produtos/1
+        // PUT: api/v1/produtos/1
         /// <summary>
         /// Edita o produto pelo id informado
         /// </summary>
@@ -63,7 +71,6 @@ namespace ControleEstoqueProduto.API.Controllers
         ///        "nome": "Produto 1",
         ///        "qtde": 1,
         ///        "ativo": true,
-        ///        "delete": false
         ///     }
         ///
         /// </remarks>
@@ -90,7 +97,7 @@ namespace ControleEstoqueProduto.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Produtos
+        // POST: api/v1/produtos/
         /// <summary>
         /// Cria um novo produto
         /// </summary>
@@ -125,7 +132,7 @@ namespace ControleEstoqueProduto.API.Controllers
             return CreatedAtAction("GetProdutos", new { id = produto.Id }, produto);
         }
 
-        // DELETE: api/Produtos/1
+        // DELETE: api/v1/produtos/1
         /// <summary>
         /// Deleta o produto filtrado pelo id informado(Este delete é somente virtual, garantido que o produto continue no banco caso precise dele para algum reprocesso. 
         /// Existe uma variável no banco de dados chamada "Delete" do tipo boolean, onde somente trocamos está variável para true e não mostramos mais em nenhum Get e 
