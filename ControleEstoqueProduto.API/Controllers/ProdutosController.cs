@@ -15,14 +15,13 @@ namespace ControleEstoqueProduto.API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-
-        private DateTime horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
-
+        private readonly DateTime horarioBrasilia;
         private readonly IProdutoRepository _produtoRepository;
 
 		public ProdutosController(IProdutoRepository produtoRepository)
 		{
             _produtoRepository = produtoRepository;
+            horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
         }
 
         // GET: api/v1/produtos/
@@ -34,9 +33,9 @@ namespace ControleEstoqueProduto.API.Controllers
         [HttpGet]
         [Consumes("application/json")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos([FromServices]IProdutoRepository produtoRepository)
+        public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos()
         {
-            return await produtoRepository.GetAll();
+            return await _produtoRepository.GetAll();
         }
 
         // GET: api/v1/produtos/1
@@ -78,21 +77,21 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <response code="204">Retorna vazio indicando que o produto foi alterado com sucesso</response>
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> PutProduto(int id, Produto produto, [FromServices]IProdutoRepository produtoRepository)
+        public async Task<IActionResult> PutProduto(int id, Produto produto)
 		{
             if (id != produto.Id)
                 return BadRequest(new { message = "Id filtrado é diferente do Id do request body." });
 
-			if (!produtoRepository.ProdutoExists(id))
+			if (!_produtoRepository.ProdutoExists(id))
                 return NotFound(new { message = "Produto não encontrado." });
 
             produto.Nome = produto.Nome.Trim();
 
-			if (produtoRepository.ProdutoDeleteExists(id))
+			if (_produtoRepository.ProdutoDeleteExists(id))
 				return StatusCode(409, "Este produto foi deletado e não é possível alterá-lo");
 
 			produto.DataAlteracao = horarioBrasilia;
-            await produtoRepository.Update(produto);
+            await _produtoRepository.Update(produto);
 
             return NoContent();
         }
@@ -120,14 +119,14 @@ namespace ControleEstoqueProduto.API.Controllers
         [ProducesResponseType(201)]
         //[ProducesResponseType(typeof(ProdutoPostStatus200), StatusCodes.Status200OK)]
         //[SwaggerRequestExample]
-        public async Task<ActionResult<Produto>> PostProduto(Produto produto, [FromServices]IProdutoRepository produtoRepository)
+        public async Task<ActionResult<Produto>> PostProduto(Produto produto)
         {
             produto.Nome = produto.Nome.Trim();
 
             produto.DataInclusao = horarioBrasilia;
             produto.DataAlteracao = horarioBrasilia;
 
-            await produtoRepository.Add(produto);
+            await _produtoRepository.Add(produto);
 
             return CreatedAtAction("GetProdutos", new { id = produto.Id }, produto);
         }
@@ -142,14 +141,14 @@ namespace ControleEstoqueProduto.API.Controllers
         /// <response code="204">Retorna vazio indicando que a exclusão foi feita com sucesso</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> DeleteProduto(int id, [FromServices]IProdutoRepository produtoRepository)
+        public async Task<IActionResult> DeleteProduto(int id)
         {
-            var produto = await produtoRepository.Get(id);
+            var produto = await _produtoRepository.Get(id);
             if (produto == null)
                 return NotFound(new { message = "Produto não encontrado." });
 
             produto.DataAlteracao = horarioBrasilia;
-            await produtoRepository.Delete(produto);
+            await _produtoRepository.Delete(produto);
 
             return NoContent();
         }
