@@ -6,7 +6,9 @@
  <a href="#Requisitos">Requisitos</a> •
  <a href="#Tecnologias">Tecnologias</a> •
  <a href="#Json API">Json API</a> •
+ <a href="#Autor">Autor</a> •
  <a href="#License">License</a>
+
 </p>
 
 <h4 align="center">
