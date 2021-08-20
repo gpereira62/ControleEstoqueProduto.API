@@ -63,25 +63,27 @@ namespace TestProjectProdutoController
 			Assert.Equal(produto1.Id, resultado.Result.Id);
 		}
 
-		//[Fact(DisplayName = "Alterar um produto com sucesso")]
-		//public async void TestProdutoRepositoryUpdate()
-		//{
-		//	// Arrange
-		//	var options = new DbContextOptionsBuilder<Contexto>()
-		//						  .UseInMemoryDatabase(databaseName: "MockDB")
-		//						  .Options;
-		//	var context = new Contexto(options);
-		//	context.Produtos.Add(new Produto { Id = 1, Nome = "produto 1" });
-		//	var produtoRepository = new ProdutoRepository(context);
+		[Fact(DisplayName = "Alterar um produto com sucesso")]
+		public async void TestProdutoRepositoryUpdate()
+		{
+			// Arrange
+			var options = new DbContextOptionsBuilder<Contexto>()
+								  .UseInMemoryDatabase(databaseName: "MockDB")
+								  .Options;
+			var context = new Contexto(options);
+			var produtoRepository = new ProdutoRepository(context);
+			var produto = new Produto { Id = 1, Nome = "produto 1" };
+			await produtoRepository.Add(produto);
+			produto.Nome = "produto alterado";
 
-		//	// Act
-		//	await produtoRepository.Update(new Produto { Id = 1, Nome = "produto alterado" });
+			// Act
+			await produtoRepository.Update(produto);
 
-		//	// Assert
-		//	Assert.Equal(1, produtoRepository.Get(1).Result.Id);
-		//	Assert.NotEqual("produto 1", produtoRepository.Get(1).Result.Nome);
-		//	Assert.Equal("produto alterado", produtoRepository.Get(1).Result.Nome);
-		//}
+			// Assert
+			Assert.Equal(1, produtoRepository.Get(1).Result.Id);
+			Assert.NotEqual("produto 1", produtoRepository.Get(1).Result.Nome);
+			Assert.Equal("produto alterado", produtoRepository.Get(1).Result.Nome);
+		}
 
 		[Fact(DisplayName = "Cadastrar um produto com sucesso")]
 		public async void TestProdutoRepositoryAdd()
