@@ -5,6 +5,7 @@
 <p align="center">
  <a href="#Requisitos">Requisitos</a> •
  <a href="#Tecnologias">Tecnologias</a> •
+ <a href="#Json API">Json API</a> •
  <a href="#License">License</a>
 </p>
 
@@ -37,6 +38,19 @@ As seguintes ferramentas foram usadas na construção do projeto:
 - [Swagger](https://swagger.io/)
 - [XUnit](https://xunit.net/)
 - [NSubstitute](https://nsubstitute.github.io/help/getting-started/)
+
+### Json API
+```bash
+{
+  "id": 1,                                       // Id do produto
+  "nome": "Produto 1",                           // Nome do Produto
+  "qtde": 5,                                     // Quantidade do Produto em Estoque
+  "ativo": true,                                 // Se o Produto está Ativo ou não
+  "delete": false,                               // Delete somente virtual, então quando for "True", o produto não irá aparecer em nenhum Get e também não é possível alterá-lo.
+  "dataInclusao": "2021-08-18T20:05:22.6084378", // Data e Hora de brasília da Inclusão do Produto
+  "dataAlteracao": "2021-08-18T20:05:22.6084378" // Data e Hora de brasília da Alteração do Produto
+}
+```
 
 ### Autor
 
