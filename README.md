@@ -6,6 +6,7 @@
  <a href="#Requisitos">Requisitos</a> •
  <a href="#Tecnologias">Tecnologias</a> •
  <a href="#Json API">Json API</a> •
+ <a href="#Testando a API">Testando a API</a> •
  <a href="#Autor">Autor</a> •
  <a href="#License">License</a>
 
@@ -27,7 +28,7 @@
 - [x] Utilizar o Design Pattern Repository para acessar o banco
 - [x] Utilizar o Swagger para Testar a API e Documenta-lá
 - [x] Realizar Testes Unitários nas requisições basicas do Controler e do Repositório
-- [x] Deploy da Aplicação no Azure
+- [x] Deploy da Aplicação no Azure - [Link](https://controleestoqueprodutoapi.azurewebsites.net/swagger/index.html) - ON ✔
 
 ### Tecnologias
 
@@ -53,6 +54,29 @@ As seguintes ferramentas foram usadas na construção do projeto:
   "dataAlteracao": "2021-08-18T20:05:22.6084378" // Data e Hora de brasília da Alteração do Produto
 }
 ```
+
+### Testando a API
+
+Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
+
+- [Git](https://git-scm.com)
+- [Visual Studio 2019](https://visualstudio.microsoft.com/pt-br/downloads/)
+
+Caso você já tenha instalado no seu computador, segue as versões que foram utilizadas: 
+- Git: git version 2.32.0.windows.2
+- Visual Studio 2019: 16.10.3
+
+Passo a Passo:
+
+- Clone o repositório no seu computador; 
+ 	- Comando: git clone https://github.com/gpereira62/ControleEstoqueProduto.API.git
+- Entre na pasta e execute o arquivo "ControleEstoqueProduto.API", abra ele pelo Visual Studio 2019; 
+- Com o Visual Studio 2019 aberto, na barra de pesquisa, pesquise por "Package Manager Console" e abra essa janela;
+- Ao abrir, execute o comando "Update-database";
+- Agora execute o projeto; 
+ 	- Url: https://localhost:44342/swagger/index.html
+
+![image](https://user-images.githubusercontent.com/42392839/130317078-29db6645-4010-4a25-acce-c1a974372211.png)
 
 ### Autor
 
