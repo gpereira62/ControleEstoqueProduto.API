@@ -16,7 +16,7 @@
 	🚧 Concluído 🚀 🚧
 </h4>
 
-### Requisitos
+## Requisitos
 
 - [x] Cadastro de produto
 - [x] Atualizar um produto existente pelo ID
@@ -30,7 +30,7 @@
 - [x] Realizar Testes Unitários nas requisições basicas do Controler e do Repositório
 - [x] Deploy da Aplicação no Azure - [Link](https://controleestoqueprodutoapi.azurewebsites.net/swagger/index.html) - ON ✔
 
-### Tecnologias
+## Tecnologias
 
 As seguintes ferramentas foram usadas na construção do projeto:
 
@@ -42,7 +42,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 - [XUnit](https://xunit.net/)
 - [NSubstitute](https://nsubstitute.github.io/help/getting-started/)
 
-### Json API
+## Json API
 ```bash
 {
   "id": 1,                                       // Id do produto
@@ -55,7 +55,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 }
 ```
 
-### Testando a API
+## Testando a API
 
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 
@@ -78,7 +78,7 @@ Passo a Passo:
 
 ![image](https://user-images.githubusercontent.com/42392839/130317078-29db6645-4010-4a25-acce-c1a974372211.png)
 
-### Autor
+## Autor
 
 <a href=https://www.linkedin.com/in/gustavo-pereira-18302316a/>
  <img style="border-radius: 50%;" src="https://media-exp1.licdn.com/dms/image/C4D03AQFICCCMopiLcQ/profile-displayphoto-shrink_200_200/0/1569797034513?e=1634774400&v=beta&t=368E-ErqfgKrjdb6b0Duk07Ic1q9QFbL0vQRwnkq7Og" width="100px;" alt=""/>
@@ -99,5 +99,5 @@ Feito com ❤️ por Gustavo Pereira 👋🏽 Entre em contato!
   </a>&nbsp;&nbsp;
   
 
-### License
+## License
 This project is under the MIT license. See the [LICENSE](https://github.com/gpereira62/ControleEstoqueProduto.API/blob/master/LICENSE) for more information.
