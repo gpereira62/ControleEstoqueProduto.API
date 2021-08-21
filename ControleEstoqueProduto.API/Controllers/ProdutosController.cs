@@ -15,13 +15,13 @@ namespace ControleEstoqueProduto.API.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly DateTime horarioBrasilia;
+        private readonly DateTime _horarioBrasilia;
         private readonly IProdutoRepository _produtoRepository;
 
 		public ProdutosController(IProdutoRepository produtoRepository)
 		{
             _produtoRepository = produtoRepository;
-            horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+            _horarioBrasilia = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
         }
 
         // GET: api/v1/produtos/
@@ -88,9 +88,9 @@ namespace ControleEstoqueProduto.API.Controllers
             produto.Nome = produto.Nome.Trim();
 
 			if (_produtoRepository.ProdutoDeleteExists(id))
-				return StatusCode(409, "Este produto foi deletado e não é possível alterá-lo");
+				return Conflict("Este produto foi deletado e não é possível alterá-lo");
 
-			produto.DataAlteracao = horarioBrasilia;
+			produto.DataAlteracao = _horarioBrasilia;
             await _produtoRepository.Update(produto);
 
             return NoContent();
@@ -123,8 +123,8 @@ namespace ControleEstoqueProduto.API.Controllers
         {
             produto.Nome = produto.Nome.Trim();
 
-            produto.DataInclusao = horarioBrasilia;
-            produto.DataAlteracao = horarioBrasilia;
+            produto.DataInclusao = _horarioBrasilia;
+            produto.DataAlteracao = _horarioBrasilia;
 
             await _produtoRepository.Add(produto);
 
@@ -147,7 +147,7 @@ namespace ControleEstoqueProduto.API.Controllers
             if (produto == null)
                 return NotFound(new { message = "Produto não encontrado." });
 
-            produto.DataAlteracao = horarioBrasilia;
+            produto.DataAlteracao = _horarioBrasilia;
             await _produtoRepository.Delete(produto);
 
             return NoContent();
