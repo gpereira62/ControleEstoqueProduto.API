@@ -1,6 +1,6 @@
 <h1>Controle de Estoque de Produtos</h1>
 
-<p align="center">🚀 Web Api .NET 5 realizando Create, Update, Delete, Get by Id, GetAll.</p>
+<p align="center">Web Api .NET 5 realizando Create, Update, Delete, Get by Id, GetAll.</p>
 
 <p align="center">
  <a href="#Requisitos">Requisitos</a> •
@@ -13,7 +13,7 @@
 </p>
 
 <h4 align="center">
-	Concluído 🚀
+	🚀 Concluído 🚀
 </h4>
 
 ## Requisitos
