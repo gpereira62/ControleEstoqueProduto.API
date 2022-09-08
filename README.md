@@ -28,7 +28,7 @@
 - [x] Utilizar o Design Pattern Repository para acessar o banco
 - [x] Utilizar o Swagger para Testar a API e Documenta-lá
 - [x] Realizar Testes Unitários nas requisições basicas do Controler e do Repositório
-- [x] Deploy da Aplicação no Azure - [Link](https://controleestoqueprodutoapi.azurewebsites.net/swagger/index.html) - ON ✔
+- [x] Deploy da Aplicação no Azure - [Link](https://controleestoqueprodutoapi.azurewebsites.net/swagger/index.html) - OFF ❌
 
 ## Tecnologias
 
