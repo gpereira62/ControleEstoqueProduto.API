@@ -1,6 +1,6 @@
 <h1>Controle de Estoque de Produtos</h1>
 
-<p>🚀 Web Api ASP .NET 5 realizando Create, Update, Delete, Get by Id, GetAll.</p>
+<p align="center">🚀 Web Api .NET 5 realizando Create, Update, Delete, Get by Id, GetAll.</p>
 
 <p align="center">
  <a href="#Requisitos">Requisitos</a> •
@@ -13,7 +13,7 @@
 </p>
 
 <h4 align="center">
-	🚧 Concluído 🚀 🚧
+	Concluído 🚀
 </h4>
 
 ## Requisitos
@@ -35,8 +35,8 @@
 As seguintes ferramentas foram usadas na construção do projeto:
 
 - [C#](https://docs.microsoft.com/pt-br/dotnet/csharp/)
-- [ASP .NET 5](https://docs.microsoft.com/pt-br/archive/msdn-magazine/2014/special-issue/asp-net-5-introducing-the-asp-net-5-preview#aspnet-5)
-- [SQL Server](https://www.microsoft.com/pt-br/sql-server/sql-server-2019)
+- [.NET 5](https://docs.microsoft.com/pt-br/dotnet/core/whats-new/dotnet-5)
+- [SQL Server](https://www.microsoft.com/pt-br/sql-server/sql-server-2022)
 - [Entity Framework](https://docs.microsoft.com/pt-br/ef/)
 - [Swagger](https://swagger.io/)
 - [XUnit](https://xunit.net/)
@@ -62,7 +62,7 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 - [Git](https://git-scm.com)
 - [Visual Studio 2019](https://visualstudio.microsoft.com/pt-br/downloads/)
 
-Caso você já tenha instalado no seu computador, segue as versões que foram utilizadas: 
+Caso você já tenha instalado no seu computador, segue as versões que foram utilizadas neste projeto: 
 - Git: git version 2.32.0.windows.2
 - Visual Studio 2019: 16.10.3
 
