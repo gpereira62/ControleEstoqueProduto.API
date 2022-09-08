@@ -62,8 +62,7 @@ Antes de começar, você vai precisar ter instalado em sua máquina as seguintes
 - [Git](https://git-scm.com)
 - [Visual Studio 2019](https://visualstudio.microsoft.com/pt-br/downloads/)
 
-Caso você já tenha instalado no seu computador, segue as versões que foram utilizadas neste projeto: 
-- Git: git version 2.32.0.windows.2
+Versão do Visual Studio utilizado neste projeto: 
 - Visual Studio 2019: 16.10.3
 
 Passo a Passo:
